@@ -123,10 +123,20 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         self._embedded_args = handler.name_regexp.match(name).groups()
 
     def _run(self, context, args):
-        if args:
-            raise DataError("Positional arguments are not allowed when using "
-                            "embedded arguments.")
-        return LibraryKeywordRunner._run(self, context, self._embedded_args)
+        """
+        Customised from default robot implementation to allow keywords with
+        embedded parameters to also take arguments.
+        :param context:
+        :param args:
+        :return:
+        """
+        arg_list = self._embedded_args
+
+        if args is not None:
+            for i in list(args):
+                arg_list.append(i)
+
+        return LibraryKeywordRunner._run(self, context, arg_list)
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
